@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gaurav Kumar | Cloud Architect</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #050507;
+            --surface-color: rgba(255, 255, 255, 0.03);
+            --surface-border: rgba(255, 255, 255, 0.08);
+            --primary-accent: #2997ff;
+            --secondary-accent: #BF5AF2;
+            --aws-orange: #FF9900;
+            --react-blue: #61DAFB;
+            --node-green: #339933;
+            --mongo-green: #4DB33D;
+            --sql-blue: #00758F;
+            --glass-blur: blur(25px);
+            --radius-lg: 24px;
+            --font-main: 'Inter', sans-serif;
+            --font-display: 'Space Grotesk', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* LOCK PAGE SCROLL */
+        body, html {
+            background-color: var(--bg-color);
+            color: #ffffff;
+            font-family: var(--font-main);
+            height: 100%;
+            overflow: hidden; 
+        }
+
+        /* Ambient Background */
+        .ambient-light {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1;
+            background: radial-gradient(circle at 15% 50%, rgba(41, 151, 255, 0.06), transparent 25%),
+                        radial-gradient(circle at 85% 30%, rgba(191, 90, 242, 0.06), transparent 25%);
+        }
+
+        /* Typography */
+        h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.02em; }
+        .gradient-text {
+            background: linear-gradient(135deg, #fff 0%, #a5a5a5 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .gradient-text-accent {
+            background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed; 
+            top: 20px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            width: 90%; 
+            max-width: 500px;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: var(--glass-blur); 
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--surface-border);
+            border-radius: 50px; 
+            padding: 10px 30px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            z-index: 9999;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+        
+        nav a { 
+            color: #888; 
+            text-decoration: none; 
+            font-size: 0.9rem; 
+            font-weight: 500; 
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+        }
+        
+        nav a:hover, nav a.active { color: #fff; }
+        
+        /* Active Dot Indicator */
+        nav a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px; left: 50%; transform: translateX(-50%);
+            width: 4px; height: 4px;
+            background: var(--primary-accent);
+            border-radius: 50%;
+        }
+
+        nav .hire-btn { background: #fff; color: #000; padding: 8px 20px; border-radius: 20px; font-weight: 700; }
+        nav .hire-btn.active::after { display: none; } 
+
+        /* --- SECTION LOGIC --- */
+        .section-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+        }
+
+        section {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100vh; 
+            padding: 120px 20px 50px 20px; /* Default top padding for content pages */
+            opacity: 0;
+            pointer-events: none; 
+            transform: scale(0.98);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            overflow-y: auto; 
+            scrollbar-width: none; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        section::-webkit-scrollbar { display: none; }
+
+        section.active-section {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+            z-index: 10;
+        }
+
+        /* --- HERO SPECIFIC STYLING (FIXED) --- */
+        /* Override generic section padding so Hero centers perfectly */
+        #home {
+            justify-content: center; /* Vertically Center */
+            padding-top: 0; /* Remove top padding for hero */
+            text-align: left; /* Align text to left */
+        }
+
+        .content-wrapper {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .hero h1 { 
+            font-size: clamp(3rem, 7vw, 6rem); 
+            line-height: 1.1; 
+            margin-bottom: 25px; 
+            letter-spacing: -2px;
+        }
+        .hero p { 
+            font-size: 1.25rem; 
+            color: #999; 
+            max-width: 650px; 
+            margin-bottom: 40px; 
+        }
+        .hero-badges { display: flex; gap: 15px; flex-wrap: wrap; }
+        .cert-badge {
+            background: rgba(255, 153, 0, 0.08); border: 1px solid rgba(255, 153, 0, 0.2);
+            color: var(--aws-orange); padding: 10px 20px; border-radius: 50px;
+            font-size: 0.9rem; display: flex; align-items: center; gap: 10px; font-weight: 600;
+        }
+
+        /* About */
+        .about-container { display: grid; grid-template-columns: 1.5fr 1fr; gap: 50px; align-items: start; margin-top: 20px;}
+        .about-glass-card {
+            background: var(--surface-color); border: 1px solid var(--surface-border);
+            border-radius: var(--radius-lg); padding: 40px;
+            backdrop-filter: blur(20px); position: relative; overflow: hidden;
+        }
+        .highlight-text { color: #fff; font-weight: 600; }
+        .exp-item { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .exp-item:last-child { border: none; padding-bottom: 0; }
+        .exp-role { font-size: 1.1rem; font-weight: 700; color: #fff; }
+        .exp-company { color: var(--primary-accent); font-size: 0.95rem; }
+
+        /* Skills */
+        .skills-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; width: 100%; }
+        .skill-card {
+            background: var(--surface-color); border: 1px solid var(--surface-border);
+            border-radius: var(--radius-lg); padding: 35px;
+            position: relative; overflow: hidden; transition: transform 0.3s;
+        }
+        .skill-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.2); }
+        .skill-icon { font-size: 2.5rem; margin-bottom: 20px; color: var(--icon-color); }
+        .skill-aws { --icon-color: var(--aws-orange); }
+        .skill-node { --icon-color: var(--node-green); }
+        .skill-react { --icon-color: var(--react-blue); }
+        .skill-mongo { --icon-color: var(--mongo-green); }
+        .skill-sql { --icon-color: var(--sql-blue); }
+
+        /* Projects */
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; width: 100%; }
+        .project-card {
+            border-radius: var(--radius-lg); overflow: hidden;
+            background: var(--surface-color); border: 1px solid var(--surface-border);
+            transition: 0.4s;
+        }
+       /* --- UPDATED PROJECT IMAGES (Zoom Effect & Better Overlay) --- */
+        .project-image {
+            height: 220px;
+            position: relative;
+            overflow: hidden; /* Required for zoom effect so it stays inside borders */
+        }
+        
+        /* The actual image layer */
+        .project-bg-layer {
+            position: absolute; 
+            inset: 0;
+            background-size: cover; 
+            background-position: center;
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth slow zoom */
+            z-index: 1;
+        }
+        
+        /* Zoom on hover */
+        .project-card:hover .project-bg-layer {
+            transform: scale(1.1);
+        }
+
+        /* Lighter gradient overlay so image is visible */
+        .project-image::after {
+            content:''; 
+            position: absolute; 
+            inset: 0;
+            z-index: 2;
+            /* Lighter at top, dark at bottom to blend into text area */
+            background: linear-gradient(to top, var(--bg-color) 5%, rgba(0,0,0,0.1) 100%);
+        }
+        .project-content { padding: 30px; }
+        /* --- UPDATED TECH TAGS (Fixed Overlapping) --- */
+        .tech-stack { 
+            display: flex; 
+            gap: 12px; /* Increased gap between tags */
+            margin-top: 25px; /* More space above tags */
+            flex-wrap: wrap; /* Ensures they drop to next line if needed */
+        }
+        .tech-pill { 
+            font-size: 0.8rem; 
+            background: rgba(255,255,255,0.08); /* Slightly brighter bg */
+            padding: 8px 16px; /* More padding for "breathing room" */
+            border-radius: 30px; /* Rounder look */
+            border: 1px solid rgba(255,255,255,0.1); 
+            white-space: nowrap; /* Prevents text from breaking inside the pill */
+            color: #ddd;
+            transition: 0.3s;
+        }
+        /* Subtle glow on hover for tags */
+        .project-card:hover .tech-pill {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--primary-accent);
+            color: #fff;
+        }
+
+        /* Contact */
+        .contact-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid var(--surface-border); padding: 60px; border-radius: 40px;
+            backdrop-filter: blur(10px); text-align: center; max-width: 700px; margin: 0 auto;
+        }
+        .social-links { margin-top: 40px; display: flex; justify-content: center; gap: 25px; }
+        .social-links a { color: #fff; font-size: 1.8rem; opacity: 0.6; transition: 0.3s; }
+        .social-links a:hover { opacity: 1; transform: translateY(-3px); }
+
+        /* Animations */
+        .animate-in { animation: fadeInUp 0.6s ease forwards; opacity: 0; transform: translateY(20px); }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* Mobile Fixes */
+        @media (max-width: 800px) {
+            .about-container { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 3.5rem; }
+            
+            section { 
+                padding-top: 40px; 
+                padding-bottom: 120px; /* Space for bottom nav */ 
+            }
+            
+            /* Home specific mobile adjustment */
+            #home {
+                justify-content: center;
+                padding-top: 0;
+            }
+            
+            nav { 
+                width: 95%; top: auto; bottom: 20px; 
+                padding: 10px 20px; justify-content: space-between;
+            }
+            nav a { font-size: 0.85rem; }
+            nav .hire-btn { padding: 8px 16px; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-light"></div>
+
+    <nav>
+        <a onclick="showSection('home')" id="nav-home" class="active">Home</a>
+        <a onclick="showSection('about')" id="nav-about">About</a>
+        <a onclick="showSection('skills')" id="nav-skills">Skills</a>
+        <a onclick="showSection('projects')" id="nav-projects">Work</a>
+        <a onclick="showSection('contact')" id="nav-contact" class="hire-btn">Hire Me</a>
+    </nav>
+
+    <div class="section-container">
+
+        <section id="home" class="active-section hero">
+            <div class="content-wrapper">
+                <div class="animate-in">
+                    <h1 class="gradient-text" style="margin-bottom: 15px; line-height: 1.2;">Gaurav Kumar</h1>
+                    
+                    <h2 class="gradient-text-accent" style="font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; margin-bottom: 15px; letter-spacing: -1px; line-height: 1.2;">
+                        Cloud Architect & Full Stack Developer
+                    </h2>
+
+                    <h3 style="font-size: clamp(1.2rem, 3vw, 1.5rem); color: #fff; font-weight: 400; margin-bottom: 30px; font-family: var(--font-main); letter-spacing: 1px;">
+                        Cloud. Code. Scale.
+                    </h3>
+                    
+                    <p style="font-size: 1.15rem; color: #bbb; max-width: 650px; margin-bottom: 40px; line-height: 1.6;">
+                        I build scalable cloud-native applications. Transforming complex business requirements into secure, scalable cloud solutions.
+                    </p>
+                    
+                    <div class="hero-badges">
+                        <div class="cert-badge">
+                            <i class="fab fa-aws"></i> AWS Solution Architect
+                        </div>
+                        <div class="cert-badge" style="border-color: rgba(97, 218, 251, 0.3); color: var(--react-blue); background: rgba(97, 218, 251, 0.08);">
+                            <i class="fab fa-aws"></i> Certified Developer
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about">
+            <div class="content-wrapper">
+                <h2 class="gradient-text animate-in" style="font-size: 2.5rem; margin-bottom: 40px;">About Me</h2>
+                
+                <div class="about-container">
+                    <div class="about-text animate-in delay-1">
+                        <p style="font-size: 1.1rem; color: #bbb; margin-bottom: 25px;">
+                            I am working as a <span class="highlight-text">Software Developer</span> at <span class="highlight-text">Consilium Software</span>, where I bridge the gap between complex backend logic and intuitive user experiences. My journey started with writing simple code, but today I architect entire ecosystems that power enterprise-grade communication platforms.
+                        </p>
+                        <p style="font-size: 1.1rem; color: #bbb; margin-bottom: 25px;">
+                            Specializing in <span class="highlight-text">AWS Cloud</span> and the <span class="highlight-text">MERN Stack</span>, I don't just build applications—I engineer scalable solutions. From optimizing serverless functions for Amazon Connect integrations to architecting complex systems for high-traffic environments, I ensure every solution is robust, secure, and cost-efficient.
+                        </p>
+                        <p style="font-size: 1.1rem; color: #bbb;">
+                            Beyond development, I am deeply invested in <span class="highlight-text">Operational Excellence</span>. Whether it's managing Windows Servers, fine-tuning SQL databases, or implementing AWS cost-saving strategies, I focus on delivering long-term value. <strong>I am dedicated to continuous learning, always exploring emerging technologies.</strong>
+                        </p>
+                    </div>
+
+                   <div class="about-glass-card animate-in delay-2">
+                        <h3 style="margin-bottom: 25px; font-size: 1.3rem; color:#fff;">Professional Summary</h3>
+                        
+                        <div class="exp-item">
+                            <div class="exp-role">Software Developer</div>
+                            <div class="exp-company">Consilium Software <span style="font-size: 0.85rem; color: #666; font-weight: 400;">(Apr 2024 - Present)</span></div>
+                            <p style="font-size: 0.9rem; color: #888; margin-top: 5px;">
+                                Spearheading the Unified Agent Desktop & AWS Operations.
+                            </p>
+                        </div>
+
+                        <div class="exp-item">
+                            <div class="exp-role">Junior Software Developer</div>
+                            <div class="exp-company">Consilium Software <span style="font-size: 0.85rem; color: #666; font-weight: 400;">(Mar 2023 - Mar 2024)</span></div>
+                            <p style="font-size: 0.9rem; color: #888; margin-top: 5px;">
+                                Developed core modules for UniCampaign and optimized backend APIs.
+                            </p>
+                        </div>
+
+                        <div class="exp-item">
+                            <div class="exp-role">Full Stack Developer Intern</div>
+                            <div class="exp-company">CodeQuotient <span style="font-size: 0.85rem; color: #666; font-weight: 400;">(Oct 2022 - Dec 2022)</span></div>
+                            <p style="font-size: 0.9rem; color: #888; margin-top: 5px;">
+                                Intensive training in Full Stack development and project execution.
+                            </p>
+                        </div>
+
+                        <a href="https://www.linkedin.com/in/gauravkumar31/" target="_blank" style="display: inline-block; margin-top: 15px; color: var(--primary-accent); text-decoration: none; font-weight: 600;">
+                            <i class="fab fa-linkedin"></i> Connect on LinkedIn &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills">
+            <div class="content-wrapper">
+                <h2 class="gradient-text animate-in" style="font-size: 2.5rem; margin-bottom: 40px; text-align: center;">Technical Arsenal</h2>
+                
+                <div class="skills-container">
+                    <div class="skill-card skill-aws animate-in delay-1">
+                        <i class="fab fa-aws skill-icon"></i>
+                        <h3>AWS Cloud</h3>
+                        <p style="color: #888;">Lambda, S3, EC2, Route53, Connect.</p>
+                    </div>
+                    <div class="skill-card skill-react animate-in delay-2">
+                        <i class="fab fa-react skill-icon"></i>
+                        <h3>React.js</h3>
+                        <p style="color: #888;">Modern Hooks, Redux, Context API.</p>
+                    </div>
+                    <div class="skill-card skill-node animate-in delay-3">
+                        <i class="fab fa-node-js skill-icon"></i>
+                        <h3>Node.js</h3>
+                        <p style="color: #888;">Microservices, REST APIs, Express.</p>
+                    </div>
+                    <div class="skill-card skill-sql animate-in delay-1">
+                        <i class="fas fa-database skill-icon"></i>
+                        <h3>SQL</h3>
+                        <p style="color: #888;">MS SQL Server, MySQL, Query Optimizations.</p>
+                    </div>
+                    <div class="skill-card skill-mongo animate-in delay-2">
+                        <i class="fas fa-leaf skill-icon"></i>
+                        <h3>MongoDB</h3>
+                        <p style="color: #888;">NoSQL Schemas, Aggregation.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+       <section id="projects">
+            <div class="content-wrapper">
+                <h2 class="gradient-text animate-in" style="font-size: 2.5rem; margin-bottom: 50px; text-align: center;">Featured Work</h2>
+                
+                <div class="projects-grid">
+                    
+                    <div class="project-card animate-in delay-1">
+                        <div class="project-image">
+                            <div class="project-bg-layer" style="background-image: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop');"></div>
+                        </div>
+                        <div class="project-content">
+                            <h3>Next-Gen Unified Agent Desktop</h3>
+                            <p style="color: #bbb; margin: 15px 0; font-size: 0.95rem; line-height: 1.6;">
+                                Architected a microservices-based, multi-tenant platform. Features a highly customizable, widget-driven interface supporting multiple contact centers and CRM integrations for admins, supervisors, and agents.
+                            </p>
+                            <div class="tech-stack">
+                                <span class="tech-pill">Next.js</span>
+                                <span class="tech-pill">Node.js</span>
+                                <span class="tech-pill">Microservices</span>
+                                <span class="tech-pill">gRPC</span>
+                                <span class="tech-pill">SQL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card animate-in delay-2">
+                        <div class="project-image">
+                             <div class="project-bg-layer" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop');"></div>
+                        </div>
+                        <div class="project-content">
+                            <h3>AWS Operations & Marketplace Strategy</h3>
+                            <p style="color: #bbb; margin: 15px 0; font-size: 0.95rem; line-height: 1.6;">
+                                Managed end-to-end infrastructure operations. Achieved over 30% cost reduction through optimization strategies and successfully listed enterprise products on the AWS Marketplace for global reach.
+                            </p>
+                            <div class="tech-stack">
+                                <span class="tech-pill">AWS Cloud</span>
+                                <span class="tech-pill">Cost Optimization</span>
+                                <span class="tech-pill">AWS Marketplace</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card animate-in delay-3">
+                        <div class="project-image">
+                             <div class="project-bg-layer" style="background-image: url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=800&auto=format&fit=crop');"></div>
+                        </div>
+                        <div class="project-content">
+                            <h3>All-in-One Amazon Connect Suite</h3>
+                            <p style="color: #bbb; margin: 15px 0; font-size: 0.95rem; line-height: 1.6;">
+                                Developed a centralized hub unifying dashboarding, real-time provisioning, system monitoring, campaign management, and integrations for Amazon Connect into a single pane of glass.
+                            </p>
+                            <div class="tech-stack">
+                                <span class="tech-pill">React</span>
+                                <span class="tech-pill">Node.js</span>
+                                <span class="tech-pill">AWS Lambda</span>
+                                <span class="tech-pill">Amazon Connect</span>
+                                <span class="tech-pill">SQL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                     <div class="project-card animate-in delay-1">
+                        <div class="project-image">
+                             <div class="project-bg-layer" style="background-image: url('https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800&auto=format&fit=crop');"></div>
+                        </div>
+                        <div class="project-content">
+                            <h3>Real-Time Custom Chat Engine</h3>
+                            <p style="color: #bbb; margin: 15px 0; font-size: 0.95rem; line-height: 1.6;">
+                                Engineered a proprietary chat solution featuring intelligent routing, queue management, and real-time messaging via WebSockets, including integrated WebRTC video/voice calling.
+                            </p>
+                            <div class="tech-stack">
+                                <span class="tech-pill">React</span>
+                                <span class="tech-pill">Node.js</span>
+                                <span class="tech-pill">WebSockets</span>
+                                <span class="tech-pill">WebRTC</span>
+                                <span class="tech-pill">Redis</span>
+                                <span class="tech-pill">MongoDB</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <div class="content-wrapper" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                <div class="contact-card animate-in">
+                    <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Let's Collaborate</h2>
+                    <p style="color: #aaa; margin-bottom: 30px;">Ready to architect the future? Send me a message.</p>
+                    
+                    <a href="mailto:devwithgaurav@gmail.com" class="cta-button" style="background: #fff; color: #000; padding: 15px 40px; border-radius: 50px; text-decoration: none; font-weight: 700;">
+                        Send Email
+                    </a>
+
+                    <div class="social-links">
+                        <a href="https://github.com/gauravchahar31"><i class="fab fa-github"></i></a>
+                        <a href="https://www.linkedin.com/in/gauravkumar31/"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                
+                <footer style="margin-top: 50px; text-align: center; color: #555;">
+                    <p>© 2025 Gaurav Kumar</p>
+                </footer>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('section');
+            sections.forEach(sec => {
+                sec.classList.remove('active-section');
+            });
+
+            // Show selected section
+            const activeSection = document.getElementById(sectionId);
+            activeSection.classList.add('active-section');
+
+            // Trigger Animations
+            const animatedElements = activeSection.querySelectorAll('.animate-in');
+            animatedElements.forEach(el => {
+                el.style.animation = 'none';
+                el.offsetHeight; /* trigger reflow */
+                el.style.animation = null; 
+            });
+
+            // Update Navigation
+            const navLinks = document.querySelectorAll('nav a');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+            document.getElementById('nav-' + sectionId).classList.add('active');
+        }
+    </script>
+</body>
+</html>

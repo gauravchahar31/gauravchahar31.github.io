@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Daily Progress</title>
+
+<style>
+:root {
+  --bg: #f5f7fb;
+  --card: #ffffff;
+  --primary: #2563eb;
+  --text: #0f172a;
+  --muted: #64748b;
+  --success: #16a34a;
+  --warning: #f97316;
+  --radius: 18px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+               "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app {
+  max-width: 520px;
+  margin: auto;
+  padding: 1rem;
+}
+
+h1 {
+  font-size: 1.8rem;
+  margin-bottom: .2rem;
+}
+
+.subtitle {
+  color: var(--muted);
+  margin-bottom: 1.2rem;
+}
+
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+input, select {
+  width: 100%;
+  padding: 0.7rem;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  font-size: 1rem;
+}
+
+button {
+  width: 100%;
+  padding: 0.85rem;
+  margin-top: 0.9rem;
+  border-radius: 16px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.time-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.select-wrapper {
+  position: relative;
+  margin-bottom: 0.6rem;
+}
+
+.select-wrapper::after {
+  content: "▾";
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--muted);
+}
+
+.select-wrapper select {
+  appearance: none;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  margin: 0.45rem 0;
+}
+
+.remaining {
+  margin-top: 0.9rem;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.green { color: var(--success); }
+.orange { color: var(--warning); }
+
+/* ---------- TOAST ALERT ---------- */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #111827;
+  color: #fff;
+  padding: 0.8rem 1.2rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s, transform .3s;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-6px);
+}
+
+.toast.success { background: #16a34a; }
+.toast.info { background: #2563eb; }
+</style>
+</head>
+
+<body>
+
+<div class="app">
+  <h1>Daily Progress</h1>
+  <div class="subtitle">Build consistency, not pressure</div>
+
+  <div class="card">
+    <label>Date</label>
+    <input type="date" id="datePicker">
+  </div>
+
+  <div class="card">
+    <label>🎯 Study Goal</label>
+    <div class="time-grid">
+      <input type="number" id="goalHours" placeholder="Hours">
+      <input type="number" id="goalMinutes" placeholder="Minutes">
+    </div>
+    <button onclick="saveGoal()">Save Goal</button>
+  </div>
+
+  <div class="card">
+    <label>Add Time Entry</label>
+    <div class="select-wrapper">
+      <select id="type">
+        <option value="study">Study</option>
+        <option value="class">Class</option>
+        <option value="outing">Outing</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+
+    <div class="time-grid">
+      <input type="number" id="entryHours" placeholder="Hours">
+      <input type="number" id="entryMinutes" placeholder="Minutes">
+    </div>
+
+    <button onclick="addEntry()">Add Entry</button>
+  </div>
+
+  <div class="card" id="summary">Loading…</div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const API = "http://localhost:3000/api";
+const toast = document.getElementById("toast");
+
+const datePicker = document.getElementById("datePicker");
+const goalHours = document.getElementById("goalHours");
+const goalMinutes = document.getElementById("goalMinutes");
+const entryHours = document.getElementById("entryHours");
+const entryMinutes = document.getElementById("entryMinutes");
+const type = document.getElementById("type");
+const summary = document.getElementById("summary");
+
+const toMinutes = (h, m) => (Number(h || 0) * 60) + Number(m || 0);
+const toHM = (mins) => ({ h: Math.floor(mins / 60), m: mins % 60 });
+
+function showToast(msg, kind = "info") {
+  toast.textContent = msg;
+  toast.className = `toast show ${kind}`;
+  setTimeout(() => toast.classList.remove("show"), 2500);
+}
+
+function getISTDate() {
+  const now = new Date();
+  const ist = new Date(now.getTime() + 330 * 60000);
+  return ist.toISOString().split("T")[0];
+}
+
+async function loadSummary() {
+  if (!datePicker.value) return;
+
+  const date = datePicker.value;
+  const [goalRes, entryRes] = await Promise.all([
+    fetch(`${API}/goal/${date}`),
+    fetch(`${API}/entry/${date}`)
+  ]);
+
+  const goal = await goalRes.json();
+  const entries = await entryRes.json();
+
+  const goalTotal = goal?.studyGoalMinutes || 0;
+  const g = toHM(goalTotal);
+  goalHours.value = g.h;
+  goalMinutes.value = g.m;
+
+  const totals = { study: 0, class: 0, outing: 0, other: 0 };
+  entries.forEach(e => totals[e.type] += e.minutes);
+
+  const fmt = (m) => {
+    const t = toHM(m);
+    return `${t.h}h ${t.m}m`;
+  };
+
+  if (totals.study > goalTotal && goalTotal > 0) {
+    const extra = totals.study - goalTotal;
+    summary.innerHTML = `
+      <div class="summary-item"><span>Study</span><span>${fmt(totals.study)}</span></div>
+      <div class="summary-item"><span>Class</span><span>${fmt(totals.class)}</span></div>
+      <div class="summary-item"><span>Outing</span><span>${fmt(totals.outing)}</span></div>
+      <div class="summary-item"><span>Other</span><span>${fmt(totals.other)}</span></div>
+      <hr>
+      <div class="remaining green">
+        🎉 Goal Achieved! Extra ${fmt(extra)} studied. Amazing work!
+      </div>
+    `;
+  } else {
+    const remaining = Math.max(goalTotal - totals.study, 0);
+    summary.innerHTML = `
+      <div class="summary-item"><span>Study</span><span>${fmt(totals.study)}</span></div>
+      <div class="summary-item"><span>Class</span><span>${fmt(totals.class)}</span></div>
+      <div class="summary-item"><span>Outing</span><span>${fmt(totals.outing)}</span></div>
+      <div class="summary-item"><span>Other</span><span>${fmt(totals.other)}</span></div>
+      <hr>
+      <div class="remaining orange">
+        ⏳ Remaining Study: ${fmt(remaining)}
+      </div>
+    `;
+  }
+}
+
+async function saveGoal() {
+  const total = toMinutes(goalHours.value, goalMinutes.value);
+  if (!total) return showToast("Please enter goal time");
+
+  await fetch(`${API}/goal`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      date: datePicker.value,
+      studyGoalMinutes: total
+    })
+  });
+
+  showToast("🎯 Goal updated successfully", "success");
+  loadSummary();
+}
+
+async function addEntry() {
+  const total = toMinutes(entryHours.value, entryMinutes.value);
+  if (!total) return showToast("Please enter time");
+
+  await fetch(`${API}/entry`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      date: datePicker.value,
+      type: type.value,
+      minutes: total
+    })
+  });
+
+  entryHours.value = "";
+  entryMinutes.value = "";
+
+  showToast("⏱ Entry added", "success");
+  loadSummary();
+}
+
+datePicker.value = getISTDate();
+loadSummary();
+datePicker.addEventListener("change", loadSummary);
+</script>
+
+</body>
+</html>

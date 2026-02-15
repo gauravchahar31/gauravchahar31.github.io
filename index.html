@@ -436,7 +436,7 @@
        <section id="projects">
     <div class="content-wrapper">
         <h2 class="gradient-text animate-in" style="font-size: 2.5rem; margin-bottom: 50px; text-align: center;">
-            Selected Projects & Impact
+            Enterprise Platforms & Architecture
         </h2>
 
         <div class="projects-grid">
@@ -447,17 +447,17 @@
                     <div class="project-bg-layer" style="background-image: url('https://images.unsplash.com/photo-1555949963-aa79dcee981c?q=80&w=800&auto=format&fit=crop');"></div>
                 </div>
                 <div class="project-content">
-                    <h3>Enterprise Contact Center Control Platform</h3>
+                    <h3>Unified Contact Center Orchestration Layer</h3>
                     <p style="color: #bbb; margin: 15px 0; font-size: 0.95rem; line-height: 1.6;">
-                        Designed and built a centralized operations layer over cloud contact centers, enabling provisioning automation, real-time reporting, campaign orchestration, and quality monitoring. Implemented secure multi-region AWS architecture with high availability and disaster recovery.
+                        Designed a centralized orchestration platform integrating Cisco UCCE, Webex Contact Center, Genesys, and Amazon Connect. Enabled provisioning automation, real-time monitoring, reporting aggregation, campaign execution, and CRM integrations through a single operational control plane.
                     </p>
                     <div class="tech-stack">
-                        <span class="tech-pill">React</span>
-                        <span class="tech-pill">Node.js</span>
                         <span class="tech-pill">Amazon Connect</span>
-                        <span class="tech-pill">Kinesis</span>
-                        <span class="tech-pill">RDS</span>
-                        <span class="tech-pill">S3</span>
+                        <span class="tech-pill">Cisco UCCE</span>
+                        <span class="tech-pill">Webex CC</span>
+                        <span class="tech-pill">Genesys</span>
+                        <span class="tech-pill">Node.js</span>
+                        <span class="tech-pill">React</span>
                     </div>
                 </div>
             </div>
@@ -468,15 +468,15 @@
                     <div class="project-bg-layer" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop');"></div>
                 </div>
                 <div class="project-content">
-                    <h3>High-Volume Campaign & Dialing Engine</h3>
+                    <h3>Distributed Outbound Dialing & Campaign Engine</h3>
                     <p style="color: #bbb; margin: 15px 0; font-size: 0.95rem; line-height: 1.6;">
-                        Developed a distributed outbound campaign system supporting agentless, predictive, and progressive dialing for voice, email, and WhatsApp. Built SQL-driven schedulers, concurrency control, queue balancing, and multi-machine coordination for scalable execution.
+                        Built a high-volume outbound system supporting agentless, predictive, and progressive dialing across UCCE and Genesys environments, with campaign extensions into Amazon Connect. Implemented distributed SQL-based schedulers, concurrency controls, retry strategies, and cross-machine coordination for horizontal scalability.
                     </p>
                     <div class="tech-stack">
-                        <span class="tech-pill">Node.js</span>
+                        <span class="tech-pill">Predictive Dialing</span>
+                        <span class="tech-pill">Progressive Dialing</span>
                         <span class="tech-pill">SQL Server</span>
                         <span class="tech-pill">Redis</span>
-                        <span class="tech-pill">Webhooks</span>
                         <span class="tech-pill">Microservices</span>
                     </div>
                 </div>
@@ -488,16 +488,17 @@
                     <div class="project-bg-layer" style="background-image: url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=800&auto=format&fit=crop');"></div>
                 </div>
                 <div class="project-content">
-                    <h3>Custom IVR Flow Designer & Execution Engine</h3>
+                    <h3>Advanced IVR Flow Designer & Execution Framework</h3>
                     <p style="color: #bbb; margin: 15px 0; font-size: 0.95rem; line-height: 1.6;">
-                        Built a drag-and-drop IVR designer with version control, hierarchical node mapping, and execution JSON export for UCCE and enterprise telephony systems. Implemented dynamic routing, menu branching logic, and database-driven interaction tracking.
+                        Developed a production-grade IVR design studio with drag-and-drop flow creation, version control, hierarchical node linking, and execution JSON generation for Cisco UCCE, UCCX, and enterprise IVR systems. Enabled dynamic routing, skill-group transfers, transaction tracking, and real-time configuration updates.
                     </p>
                     <div class="tech-stack">
+                        <span class="tech-pill">Cisco UCCE</span>
+                        <span class="tech-pill">UCCX</span>
                         <span class="tech-pill">Node.js</span>
                         <span class="tech-pill">Sequelize</span>
                         <span class="tech-pill">SQL Server</span>
                         <span class="tech-pill">React Flow</span>
-                        <span class="tech-pill">REST APIs</span>
                     </div>
                 </div>
             </div>
@@ -508,16 +509,17 @@
                     <div class="project-bg-layer" style="background-image: url('https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800&auto=format&fit=crop');"></div>
                 </div>
                 <div class="project-content">
-                    <h3>Real-Time Omnichannel Messaging Platform</h3>
+                    <h3>Real-Time Omnichannel Interaction Engine</h3>
                     <p style="color: #bbb; margin: 15px 0; font-size: 0.95rem; line-height: 1.6;">
-                        Engineered a WebSocket-based chat and email routing engine with intelligent queue resolution, sticky agent logic, business-hour enforcement, and concurrency management. Integrated transcript storage, file handling, and supervisor quality workflows.
+                        Engineered a WebSocket-based messaging platform handling chat and email routing with sticky-agent logic, skill-based assignment, business-hour enforcement, SLA controls, and supervisor quality monitoring. Integrated IMAP/SMTP processing, transcript analytics, and CRM synchronization.
                     </p>
                     <div class="tech-stack">
-                        <span class="tech-pill">Node.js</span>
-                        <span class="tech-pill">Socket.io</span>
+                        <span class="tech-pill">WebSockets</span>
                         <span class="tech-pill">MongoDB</span>
                         <span class="tech-pill">Redis</span>
-                        <span class="tech-pill">IMAP/SMTP</span>
+                        <span class="tech-pill">IMAP</span>
+                        <span class="tech-pill">SMTP</span>
+                        <span class="tech-pill">WebRTC</span>
                     </div>
                 </div>
             </div>
@@ -528,17 +530,16 @@
                     <div class="project-bg-layer" style="background-image: url('https://images.unsplash.com/photo-1508780709619-79562169bc64?q=80&w=800&auto=format&fit=crop');"></div>
                 </div>
                 <div class="project-content">
-                    <h3>Cloud Infrastructure & AWS Partnership Enablement</h3>
+                    <h3>Secure Multi-Region Cloud Architecture & Marketplace Enablement</h3>
                     <p style="color: #bbb; margin: 15px 0; font-size: 0.95rem; line-height: 1.6;">
-                        Architected secure multi-AZ and multi-region deployments with WAF, ALB, ACM, VPC endpoints, Secrets Manager, and KMS integration. Led AWS Marketplace listings, cost optimization initiatives, APN alignment, and Well-Architected implementations.
+                        Architected highly available multi-AZ and DR-ready deployments across AWS with Route 53, WAF, ALB, ACM, VPC endpoints, Secrets Manager, and KMS. Led AWS Marketplace product listings, APN alignment, cost optimization strategies, and Well-Architected implementations for enterprise clients.
                     </p>
                     <div class="tech-stack">
                         <span class="tech-pill">AWS</span>
-                        <span class="tech-pill">Route 53</span>
-                        <span class="tech-pill">WAF</span>
-                        <span class="tech-pill">ALB</span>
-                        <span class="tech-pill">ACM</span>
-                        <span class="tech-pill">Terraform</span>
+                        <span class="tech-pill">Multi-Region HA</span>
+                        <span class="tech-pill">Disaster Recovery</span>
+                        <span class="tech-pill">AWS Marketplace</span>
+                        <span class="tech-pill">APN</span>
                     </div>
                 </div>
             </div>
@@ -602,5 +603,6 @@
 </body>
 
 </html>
+
 
 
